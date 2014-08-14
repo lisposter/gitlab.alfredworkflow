@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>li.zhu.alfred.gitlabproject</string>
+	<key>connections</key>
+	<dict>
+		<key>63F60794-BB56-4415-9372-BAF974C3A7E1</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2A7AEA9A-9C99-469D-A4E5-A4B4C951F050</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Leigh Zhu</string>
+	<key>description</key>
+	<string>Search GitLab project</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>GitLab Projects</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>plusspaces</key>
+				<false/>
+				<key>url</key>
+				<string>{query}</string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>2A7AEA9A-9C99-469D-A4E5-A4B4C951F050</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>36</integer>
+				<key>keyword</key>
+				<string>gl</string>
+				<key>runningsubtext</key>
+				<string>Retrieving search suggestions ...</string>
+				<key>script</key>
+				<string>
+// your private token
+$token = '';
+
+// your gitlab's url
+$gitlab = '';
+
+$options = array(
+    CURLOPT_HTTPHEADER =&gt; array('PRIVATE-TOKEN: '.$token)
+);
+
+$query = urlencode( "{query}" );
+
+require_once('workflows.php');
+
+$url = $gitlab.'/api/v3/projects/search/'.$query;
+
+
+$wf = new Workflows();
+$int = 1;
+
+$data = $wf-&gt;request( $url, $options);
+$repos = json_decode($data);
+
+if(count($repos) &gt; 0) {
+    for( $i=0; $i&lt;count($repos); $i++) {
+      $item = $repos[$i];
+      $icon = "icon.png";
+      $wf-&gt;result( $int++.'.'.time(), $item-&gt;web_url , $item-&gt;path_with_namespace, "", $icon );
+    }
+} 
+
+echo $wf-&gt;toxml();</string>
+				<key>subtext</key>
+				<string>Search Projects on your GitLab</string>
+				<key>title</key>
+				<string>Search GitLab</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>63F60794-BB56-4415-9372-BAF974C3A7E1</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>You should change the token to yours.
+
+Change the token in the ‘script fliter’</string>
+	<key>uidata</key>
+	<dict>
+		<key>2A7AEA9A-9C99-469D-A4E5-A4B4C951F050</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>63F60794-BB56-4415-9372-BAF974C3A7E1</key>
+		<dict>
+			<key>ypos</key>
+			<real>20</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>zhu.li</string>
+</dict>
+</plist>
